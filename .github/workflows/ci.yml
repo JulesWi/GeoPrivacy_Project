@@ -59,7 +59,11 @@ jobs:
     - name: Install Noir
       run: |
         curl -L https://raw.githubusercontent.com/noir-lang/noirup/main/install | bash
+        # Explicitly add noirup's installation directory to PATH for the current script
+        export PATH="$HOME/.noirup/bin:$PATH"
+        # Add nargo's directory to GITHUB_PATH for subsequent steps
         echo "$HOME/.nargo/bin" >> $GITHUB_PATH
+        # Now noirup commands should be found
         noirup install
         noirup default stable # Or specify a version like v0.28.0
     

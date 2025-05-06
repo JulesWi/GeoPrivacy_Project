@@ -58,13 +58,15 @@ jobs:
     # Noir Circuit Tests
     - name: Install Noir
       run: |
+        # Installe noirup. L'exécutable sera dans $HOME/.noirup/bin/noirup
         curl -L https://raw.githubusercontent.com/noir-lang/noirup/main/install | bash
-        # Source .bashrc pour que les changements de PATH faits par l'installeur noirup soient actifs
-        source "$HOME/.bashrc"
-        # Maintenant, la commande noirup devrait être disponible
-        noirup install
-        noirup default stable
-        # Ajoute le répertoire de nargo (installé par noirup) au GITHUB_PATH pour les étapes suivantes
+        
+        # Appelle noirup en utilisant son chemin complet pour installer nargo
+        "$HOME/.noirup/bin/noirup" install
+        "$HOME/.noirup/bin/noirup" default stable
+        
+        # Ajoute le répertoire de nargo ($HOME/.nargo/bin) au GITHUB_PATH 
+        # pour que nargo soit disponible dans les étapes suivantes.
         echo "$HOME/.nargo/bin" >> $GITHUB_PATH
     
     - name: Verify Noir Installation

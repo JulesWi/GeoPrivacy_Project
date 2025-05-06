@@ -37,7 +37,7 @@ jobs:
         working-directory: ./frontend
 
   notify_success:
-    if: success()
+    if: success() && secrets.SLACK_WEBHOOK != ''
     needs: deploy
     runs-on: ubuntu-latest
     steps:
@@ -51,7 +51,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   notify_failure:
-    if: failure()
+    if: failure() && secrets.SLACK_WEBHOOK != ''
     needs: deploy
     runs-on: ubuntu-latest
     steps:

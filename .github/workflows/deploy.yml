@@ -1,0 +1,66 @@
+name: Deploy GeoPrivacy to Vercel
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Use Node.js for Frontend
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+        cache-dependency-path: GeoPrivacy/frontend/package-lock.json
+    
+    - name: Install Frontend Dependencies
+      working-directory: ./GeoPrivacy/frontend
+      run: npm ci
+    
+    - name: Run Frontend Tests
+      working-directory: ./GeoPrivacy/frontend
+      run: npm test
+    
+    - name: Deploy Frontend to Vercel
+      uses: amondnet/vercel-action@v20
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        zeit-token: ${{ secrets.VERCEL_TOKEN }}
+        github-comment: true
+        working-directory: ./GeoPrivacy/frontend
+
+  notify_success:
+    if: success()
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Slack Notification
+        uses: 8398a7/action-slack@v3
+        with:
+          status: success
+          text: Deployment to Vercel successful! 🚀
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  notify_failure:
+    if: failure()
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Slack Notification
+        uses: 8398a7/action-slack@v3
+        with:
+          status: failure
+          text: Deployment to Vercel failed. 😞
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

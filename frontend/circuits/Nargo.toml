@@ -1,0 +1,12 @@
+[package]
+name = "location_proof"
+type = "bin"
+authors = ["GeoPrivacy Team"]
+description = "Zero-knowledge location proof circuit"
+keywords = ["zk", "location", "proof"]
+
+[dependencies]
+
+[[bin]]
+name = "location_proof"
+path = "src/main.nr"

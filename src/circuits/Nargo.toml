@@ -1,0 +1,7 @@
+[package]
+name = "location_proof"
+type = "bin"
+authors = ["GeoPrivacy Team"]
+description = "Zero-Knowledge Location Verification Circuit"
+
+[dependencies]

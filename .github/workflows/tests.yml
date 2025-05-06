@@ -1,0 +1,114 @@
+# Workflow for GeoPrivacy CI/CD - tests
+name: GeoPrivacy CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  lint-and-test: # CI job for frontend linting and testing
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: List GeoPrivacy/frontend directory content
+      run: |
+        echo "Listing GeoPrivacy/frontend:"
+        ls -la GeoPrivacy/frontend || echo "GeoPrivacy/frontend directory not found or ls failed"
+
+    - name: Setup Node.js for Frontend
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+        cache-dependency-path: GeoPrivacy/frontend/package-lock.json
+    
+    - name: Install Frontend Dependencies
+      working-directory: ./GeoPrivacy/frontend
+      run: npm ci
+    
+    - name: Display package.json content from GeoPrivacy/frontend
+      working-directory: ./GeoPrivacy/frontend
+      run: |
+        echo "--- Content of GeoPrivacy/frontend/package.json (from Action runner) ---"
+        cat package.json || echo "Failed to cat package.json"
+        echo "---------------------------------------------------------------------"
+        
+    - name: List available npm scripts in GeoPrivacy/frontend
+      working-directory: ./GeoPrivacy/frontend
+      run: npm run || echo "npm run command failed"
+
+    - name: Lint Frontend Code
+      working-directory: ./GeoPrivacy/frontend
+      run: npm run lint
+    
+    - name: Run Frontend Tests
+      working-directory: ./GeoPrivacy/frontend
+      run: npm test
+
+    # Unit tests for frontend/backend will be added here later if needed
+
+  deployment-check:
+    needs: [lint-and-test]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18.x'
+    
+    - name: Simulate Deployment
+      run: |
+        npm ci
+        npm run project:validate
+        # Placeholder for any non-contract deployment validation
+
+  vercel-deployment:
+    needs: [deployment-check]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Deploy to Vercel
+      uses: amondnet/vercel-action@v20
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        # zeit-token is deprecated but kept for backward compatibility with older Vercel action versions
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  release:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: [vercel-deployment]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Create Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run tests
+      run: npm test
+    
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v4
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
+  # Security job removed as it was focused on blockchain contracts
+  # New security checks can be added here in the future if needed

@@ -1,0 +1,14 @@
+name: Trigger Test Workflow
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+jobs:
+  test_trigger:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print a message
+        run: echo "Workflow Trigger Test was successfully triggered!"

@@ -1,0 +1,5 @@
+# Coordonnées proches de Paris (multipliées par 10000 pour éviter les décimaux)
+latitude = "488574"
+longitude = "23568"
+# Timestamp actuel (4 mai 2025)
+timestamp = "1714837123"

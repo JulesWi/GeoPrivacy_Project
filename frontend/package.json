@@ -1,0 +1,49 @@
+{
+  "name": "geoprivacy-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "lint": "next lint && eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "jest",
+    "noir:compile": "cd circuits && nargo compile",
+    "noir:execute": "cd circuits && nargo execute",
+    "noir:info": "cd circuits && nargo info"
+  },
+  "dependencies": {
+    "@aztec/bb.js": "^0.72.1",
+    "@noir-lang/noir_js": "^1.0.0-beta.2",
+    "@types/body-parser": "^1.19.5",
+    "axios": "^1.9.0",
+    "body-parser": "^2.2.0",
+    "crypto-js": "^4.2.0",
+    "eslint-config-next": "^14.1.0",
+    "js-sha3": "^0.9.3",
+    "leaflet": "^1.9.4",
+    "next": "^14.1.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-leaflet": "^4.2.1"
+  },
+  "resolutions": {
+    "@noir-lang/noir_js": "^1.0.0-beta.2"
+  },
+  "devDependencies": {
+    "@types/geojson": "^7946.0.16",
+    "@types/jest": "^29.5.0",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/leaflet": "^1.9.17",
+    "@types/node": "^20.11.0",
+    "@types/react": "^18.2.0",
+    "autoprefixer": "^10.4.21",
+    "jest": "^29.7.0",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^3.4.17",
+    "ts-jest": "^29.1.0",
+    "typescript": "^5.3.0"
+  }
+}

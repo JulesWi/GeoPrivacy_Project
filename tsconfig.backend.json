@@ -1,0 +1,20 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist", // Spécifie le dossier de sortie pour le JS
+    "rootDir": "./src", // Spécifie le dossier racine des sources TS
+    "module": "NodeNext", // Ou ESNext si vous préférez utiliser les import/export natifs de Node
+    "moduleResolution": "NodeNext", // Correspondance avec le module
+    "resolveJsonModule": true
+  },
+  "include": [
+    "src/backend/**/*", // Inclut uniquement les fichiers backend
+    "src/circuits/target/**/*.json" // Inclut les JSON compilés des circuits
+  ],
+  "exclude": [
+    "node_modules",
+    "src/frontend/**/*", // Exclut le frontend
+    "src/services/PaymentService.ts", // Exclut le service de paiement
+    "src/**/*.test.ts" // Exclut les fichiers de test
+  ]
+}

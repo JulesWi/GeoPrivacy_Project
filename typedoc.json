@@ -1,0 +1,26 @@
+{
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": [
+    "src/backend/api/locationProofController.ts",
+    "src/services/PaymentService.ts",
+    "src/backend/models/LocationProof.ts"
+  ],
+  "out": "docs/api",
+  "name": "GeoPrivacy Documentation",
+  "theme": "default",
+  "readme": "README.md",
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeExternals": true,
+  "disableSources": false,
+  "includeVersion": true,
+  "categorizeByGroup": true,
+  "defaultCategory": "Général",
+  "categoryOrder": [
+    "Services",
+    "Contrôleurs",
+    "Modèles",
+    "Utilitaires",
+    "*"
+  ]
+}

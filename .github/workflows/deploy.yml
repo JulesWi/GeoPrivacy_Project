@@ -17,14 +17,14 @@ jobs:
       with:
         node-version: '18.x'
         cache: 'npm'
-        cache-dependency-path: GeoPrivacy/frontend/package-lock.json
+        cache-dependency-path: frontend/package-lock.json
     
     - name: Install Frontend Dependencies
-      working-directory: ./GeoPrivacy/frontend
+      working-directory: ./frontend
       run: npm ci
     
     - name: Run Frontend Tests
-      working-directory: ./GeoPrivacy/frontend
+      working-directory: ./frontend
       run: npm test
     
     - name: Deploy Frontend to Vercel
@@ -35,7 +35,7 @@ jobs:
         vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
         zeit-token: ${{ secrets.VERCEL_TOKEN }}
         github-comment: true
-        working-directory: ./GeoPrivacy/frontend
+        working-directory: ./frontend
 
   notify_success:
     if: success()

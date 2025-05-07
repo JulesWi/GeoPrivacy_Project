@@ -58,16 +58,38 @@ jobs:
     # Noir Circuit Tests
     - name: Install Noir
       run: |
-        # Installe noirup. L'exécutable sera dans $HOME/.noirup/bin/noirup
-        curl -L https://raw.githubusercontent.com/noir-lang/noirup/main/install | bash
+        set -e # Quitte immédiatement si une commande échoue.
+        echo "Téléchargement du script d\'installation de noirup..."
+        curl -L -o noirup_install.sh https://raw.githubusercontent.com/noir-lang/noirup/main/install
         
-        # Appelle noirup en utilisant son chemin complet pour installer nargo
+        echo "Rendre le script d\'installation de noirup exécutable..."
+        chmod +x noirup_install.sh
+        
+        echo "Exécution du script d\'installation de noirup..."
+        ./noirup_install.sh
+        
+        echo "Vérification de l\'installation de noirup..."
+        if [ -f "$HOME/.noirup/bin/noirup" ]; then
+          echo "L\'exécutable noirup a été trouvé à $HOME/.noirup/bin/noirup."
+        else
+          echo "ERREUR: L\'exécutable noirup N\'A PAS été trouvé à $HOME/.noirup/bin/noirup après le script d\'installation."
+          echo "Contenu de $HOME/.noirup/bin/ :"
+          ls -la "$HOME/.noirup/bin/" || echo "$HOME/.noirup/bin/ n\'existe pas ou est vide."
+          echo "Contenu de $HOME/.noirup/ :"
+          ls -la "$HOME/.noirup/" || echo "$HOME/.noirup/ n\'existe pas ou est vide."
+          exit 1
+        fi
+        
+        echo "Installation de nargo en utilisant noirup..."
         "$HOME/.noirup/bin/noirup" install
+        
+        echo "Définition de la version par défaut de nargo avec noirup..."
         "$HOME/.noirup/bin/noirup" default stable
         
-        # Ajoute le répertoire de nargo ($HOME/.nargo/bin) au GITHUB_PATH 
-        # pour que nargo soit disponible dans les étapes suivantes.
+        echo "Ajout de nargo au GITHUB_PATH..."
         echo "$HOME/.nargo/bin" >> $GITHUB_PATH
+        
+        echo "Étape d\'installation de Noir terminée."
     
     - name: Verify Noir Installation
       run: nargo --version

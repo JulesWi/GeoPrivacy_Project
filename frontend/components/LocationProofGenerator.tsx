@@ -10,12 +10,12 @@ const DynamicTileLayer = dynamic(() => import('react-leaflet').then((mod) => mod
 const DynamicMarker = dynamic(() => import('react-leaflet').then((mod) => mod.Marker), { ssr: false });
 const DynamicPopup = dynamic(() => import('react-leaflet').then((mod) => mod.Popup), { ssr: false });
 
-// Interface pour une preuve de localisation sécurisée (sans coordonnées exactes)
+// Interface for a secure location proof (without exact coordinates)
 interface SecureLocationProof {
-  locationHash: string;  // Hash cryptographique des coordonnées (jamais les coordonnées réelles)
-  timestamp: Date;       // Horodatage de la preuve
-  zkProof: string;       // Preuve à connaissance nulle (Zero-Knowledge)
-  region?: string;       // Région approximative (ville/département)
+  locationHash: string;  // Cryptographic hash of coordinates (never the actual coordinates)
+  timestamp: Date;       // Timestamp of the proof
+  zkProof: string;       // Zero-Knowledge proof
+  region?: string;       // Approximate region (city/department)
 }
 
 const LocationProofGenerator: React.FC = () => {
@@ -59,7 +59,7 @@ const LocationProofGenerator: React.FC = () => {
     }
   }, [copied]);
 
-  // Fonction pour déterminer la région approximative à partir des coordonnées
+  // Function to determine the approximate region from coordinates
   const determineRegion = async (latitude: number, longitude: number): Promise<string> => {
     try {
       const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
@@ -71,11 +71,11 @@ const LocationProofGenerator: React.FC = () => {
     }
   };
   
-  // Fonction pour copier la preuve dans le presse-papier
-  // IMPORTANT: Ne copie jamais les coordonnées réelles
+  // Function to copy the proof to the clipboard
+  // IMPORTANT: Never copies the actual coordinates
   const copyToClipboard = () => {
     if (proof) {
-      // Création d'une preuve partageable qui NE contient PAS les coordonnées
+      // Creation of a shareable proof that DOES NOT contain coordinates
       const shareableProof = JSON.stringify({
         region: proof.region,
         timestamp: proof.timestamp,
@@ -94,7 +94,7 @@ const LocationProofGenerator: React.FC = () => {
     }
   };
 
-  // Génération de la preuve de localisation sécurisée
+  // Generation of the secure location proof
   const generateProof = async () => {
     setLoading(true);
     setError(null);
@@ -108,20 +108,20 @@ const LocationProofGenerator: React.FC = () => {
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         try {
-          // 1. Hash des coordonnées - NE JAMAIS stocker les coordonnées réelles
+          // 1. Hash of coordinates - NEVER store actual coordinates
           const rawLocation = `${position.coords.latitude},${position.coords.longitude}`;
           const locationHash = sha3_256(rawLocation);
 
-          // 2. Détermination de la région approximative (niveau ville/département)
+          // 2. Determination of the approximate region (city/department level)
           const region = await determineRegion(
             position.coords.latitude, 
             position.coords.longitude
           );
 
-          // 3. Génération de la preuve ZK (implémentation simulée pour le prototype)
+          // 3. ZK proof generation (simulated implementation for prototype)
           const zkProof = `zk_${sha3_256(rawLocation + Date.now().toString())}`;
 
-          // 4. Création de la preuve sécurisée SANS stocker les coordonnées réelles
+          // 4. Creation of the secure proof WITHOUT storing actual coordinates
           const secureProof: SecureLocationProof = {
             locationHash,
             timestamp: new Date(),
@@ -129,10 +129,10 @@ const LocationProofGenerator: React.FC = () => {
             region
           };
 
-          // 5. Mise à jour de l'état avec la preuve sécurisée
+          // 5. Update of state with the secure proof
           setProof(secureProof);
           
-          // 6. Centrage de la carte (uniquement pour l'affichage, pas stocké dans la preuve)
+          // 6. Map centering (for display only, not stored in the proof)
           setMapCenter([position.coords.latitude, position.coords.longitude]);
           setShowSuccess(true);
         } catch (error) {
@@ -272,10 +272,10 @@ const LocationProofGenerator: React.FC = () => {
                   </button>
                 </div>
                 
-                {/* Note de confidentialité */}
+                {/* Privacy Note */}
                 <div className="mt-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
                   <p className="text-sm text-blue-800">
-                    <strong>Note sur la confidentialité :</strong> Vos coordonnées exactes ne sont jamais stockées ni partagées. Seul un hash cryptographique et la région approximative sont inclus dans la preuve.
+                    <strong>Privacy Note:</strong> Your exact coordinates are never stored or shared. Only a cryptographic hash and the approximate region are included in the proof.
                   </p>
                 </div>
               </div>

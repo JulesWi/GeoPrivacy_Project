@@ -58,52 +58,50 @@ jobs:
     # Noir Circuit Tests
     - name: Install Noir
       run: |
-        set -e # Quitte immédiatement si une commande de CE script échoue.
-        echo "Téléchargement du script d\'installation de noirup..."
+        set -e
+        echo "Téléchargement du script d'installation de noirup..."
         curl -L -o noirup_install.sh https://raw.githubusercontent.com/noir-lang/noirup/main/install
         
-        echo "Rendre le script d\'installation de noirup exécutable..."
+        echo "Rendre le script d'installation de noirup exécutable..."
         chmod +x noirup_install.sh
         
-        echo "Modification de noirup_install.sh pour ajouter 'set -x' pour un traçage détaillé..."
-        # Ajoute 'set -x' après la première ligne (#!/bin/sh ou #!/bin/bash) ou après 'set -e' si présent
-        # Cela va insérer 'set -x' à la deuxième ligne si la première est un shebang.
-        # Ou après 'set -e' si c\'est la première commande significative.
-        sed -i '1a set -x' noirup_install.sh 
-        # Alternative plus robuste si 'set -e' est toujours là:
-        # sed -i '/^set -e/a set -x' noirup_install.sh
-
-        echo "Contenu modifié de noirup_install.sh (premières lignes) :"
-        head -n 5 noirup_install.sh
-
-        echo "Exécution du script d\'installation de noirup modifié avec bash et capture de la sortie..."
-        bash ./noirup_install.sh > noirup_install_output.log 2>&1 || true
+        echo "Exécution du script d'installation de noirup..."
+        # Nous nous attendons maintenant à ce qu'il s'installe dans $HOME/.nargo/bin
+        ./noirup_install.sh > noirup_install_output.log 2>&1 || true
         
-        echo "Sortie complète (avec traçage set -x) du script d\'installation (noirup_install_output.log) :"
+        echo "Sortie du script d'installation de noirup (noirup_install_output.log) :"
         cat noirup_install_output.log
         
-        echo "Vérification de l\'installation de noirup..."
-        if [ -f "$HOME/.noirup/bin/noirup" ]; then
-          echo "L\'exécutable noirup a été trouvé à $HOME/.noirup/bin/noirup."
+        echo "Vérification de l'installation de noirup..."
+        # Le chemin a changé de .noirup à .nargo pour l'exécutable noirup lui-même
+        NOIRUP_EXECUTABLE_PATH="$HOME/.nargo/bin/noirup"
+        if [ -f "$NOIRUP_EXECUTABLE_PATH" ]; then
+          echo "L'exécutable noirup a été trouvé à $NOIRUP_EXECUTABLE_PATH."
         else
-          echo "ERREUR: L\'exécutable noirup N\'A PAS été trouvé à $HOME/.noirup/bin/noirup."
-          echo "Contenu de $HOME/.noirup/bin/ (si existant) :"
-          ls -la "$HOME/.noirup/bin/" || echo "$HOME/.noirup/bin/ n\'existe pas ou est vide."
-          echo "Contenu de $HOME/.noirup/ (si existant) :"
-          ls -la "$HOME/.noirup/" || echo "$HOME/.noirup/ n\'existe pas ou est vide."
-          exit 1 # Assure que l\'étape échoue si noirup n\'est pas trouvé.
+          echo "ERREUR: L'exécutable noirup N'A PAS été trouvé à $NOIRUP_EXECUTABLE_PATH."
+          echo "Contenu de $HOME/.nargo/bin/ (si existant) :"
+          ls -la "$HOME/.nargo/bin/" || echo "$HOME/.nargo/bin/ n'existe pas ou est vide."
+          echo "Contenu de $HOME/.nargo/ (si existant) :"
+          ls -la "$HOME/.nargo/" || echo "$HOME/.nargo/ n'existe pas ou est vide."
+          # Par précaution, vérifions également l'ancien chemin .noirup
+          echo "Vérification de l'ancien chemin $HOME/.noirup/bin/ (si existant) :"
+          ls -la "$HOME/.noirup/bin/" || echo "$HOME/.noirup/bin/ n'existe pas ou est vide."
+          echo "Vérification de l'ancien chemin $HOME/.noirup/ (si existant) :"
+          ls -la "$HOME/.noirup/" || echo "$HOME/.noirup/ n'existe pas ou est vide."
+          exit 1
         fi
         
         echo "Installation de nargo en utilisant noirup..."
-        "$HOME/.noirup/bin/noirup" install
+        "$NOIRUP_EXECUTABLE_PATH" install
         
         echo "Définition de la version par défaut de nargo avec noirup..."
-        "$HOME/.noirup/bin/noirup" default stable
+        "$NOIRUP_EXECUTABLE_PATH" default stable
         
         echo "Ajout de nargo au GITHUB_PATH..."
+        # Ce chemin est correct pour nargo lui-même après l'installation par noirup
         echo "$HOME/.nargo/bin" >> $GITHUB_PATH
         
-        echo "Étape d\'installation de Noir terminée."
+        echo "Étape d'installation de Noir terminée."
     
     - name: Verify Noir Installation
       run: nargo --version

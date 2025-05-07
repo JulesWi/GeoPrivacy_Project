@@ -41,11 +41,12 @@ jobs:
         working-directory: ./frontend
 
   notify_success:
-    if: success() && (secrets.SLACK_WEBHOOK != '')
+    if: success()
     needs: deploy
     runs-on: ubuntu-latest
     steps:
       - name: Send Slack Notification
+        if: secrets.SLACK_WEBHOOK != ''
         uses: 8398a7/action-slack@v3
         with:
           status: success
@@ -55,11 +56,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   notify_failure:
-    if: failure() && (secrets.SLACK_WEBHOOK != '')
+    if: failure()
     needs: deploy
     runs-on: ubuntu-latest
     steps:
       - name: Send Slack Notification
+        if: secrets.SLACK_WEBHOOK != ''
         uses: 8398a7/action-slack@v3
         with:
           status: failure

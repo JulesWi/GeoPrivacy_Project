@@ -41,6 +41,16 @@ jobs:
         cache: 'npm'
         cache-dependency-path: 'frontend/package-lock.json'
     
+    - name: Debug Show frontend/package.json
+      working-directory: ./frontend
+      run: |
+        echo "Current directory:"
+        pwd
+        echo "Listing files in frontend directory:"
+        ls -la
+        echo "Contents of frontend/package.json:"
+        cat package.json
+
     - name: Install Dependencies
       working-directory: ./frontend
       run: npm ci

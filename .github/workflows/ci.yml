@@ -91,8 +91,9 @@ jobs:
           exit 1
         fi
         
-        echo "Installation de nargo en utilisant noirup..."
-        "$NOIRUP_EXECUTABLE_PATH" install
+        echo "Tentative de s'assurer que nargo est installé (implicitement ou via default)..."
+        # La commande 'install' n'est plus valide pour noirup.
+        # Nargo pourrait être installé par défaut, ou 'noirup default stable' pourrait s'en charger.
         
         echo "Définition de la version par défaut de nargo avec noirup..."
         "$NOIRUP_EXECUTABLE_PATH" default stable

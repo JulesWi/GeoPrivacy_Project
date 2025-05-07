@@ -125,5 +125,6 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
         vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        github-comment: false # Corrected parameter name
         working-directory: ./frontend
       timeout-minutes: 10

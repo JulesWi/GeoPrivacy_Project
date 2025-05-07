@@ -62,6 +62,7 @@ jobs:
         node-version: '18.x'
     
     - name: Simulate Deployment
+      working-directory: ./frontend
       run: |
         npm ci
         npm run project:validate

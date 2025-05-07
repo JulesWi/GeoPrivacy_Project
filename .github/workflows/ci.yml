@@ -65,19 +65,28 @@ jobs:
         echo "Rendre le script d\'installation de noirup exécutable..."
         chmod +x noirup_install.sh
         
-        echo "Exécution du script d\'installation de noirup..."
-        ./noirup_install.sh
+        echo "Exécution du script d\'installation de noirup avec bash et capture de la sortie..."
+        # Exécute le script et redirige stdout/stderr vers un fichier log.
+        # Utilise '|| true' pour que 'set -e' n\'arrête pas notre script avant que nous puissions afficher le log.
+        bash ./noirup_install.sh > noirup_install_output.log 2>&1 || true
+        
+        echo "Sortie complète du script d\'installation de noirup (noirup_install_output.log) :"
+        cat noirup_install_output.log
         
         echo "Vérification de l\'installation de noirup..."
         if [ -f "$HOME/.noirup/bin/noirup" ]; then
           echo "L\'exécutable noirup a été trouvé à $HOME/.noirup/bin/noirup."
         else
-          echo "ERREUR: L\'exécutable noirup N\'A PAS été trouvé à $HOME/.noirup/bin/noirup après le script d\'installation."
-          echo "Contenu de $HOME/.noirup/bin/ :"
+          echo "ERREUR: L\'exécutable noirup N\'A PAS été trouvé à $HOME/.noirup/bin/noirup."
+          echo "Contenu de $HOME/.noirup/bin/ (si existant) :"
           ls -la "$HOME/.noirup/bin/" || echo "$HOME/.noirup/bin/ n\'existe pas ou est vide."
-          echo "Contenu de $HOME/.noirup/ :"
+          echo "Contenu de $HOME/.noirup/ (si existant) :"
           ls -la "$HOME/.noirup/" || echo "$HOME/.noirup/ n\'existe pas ou est vide."
-          exit 1
+          echo "Vérification de l\'espace disque disponible (df -h):"
+          df -h
+          echo "Vérification des permissions sur $HOME:"
+          ls -ld "$HOME"
+          exit 1 # Assure que l\'étape échoue si noirup n\'est pas trouvé.
         fi
         
         echo "Installation de nargo en utilisant noirup..."

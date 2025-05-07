@@ -2,7 +2,7 @@
 
 ## 🚀 Overview
 
-GeoPrivacy is an innovative web application that generates zero-knowledge proofs for location verification, ensuring maximum privacy and security. The application has been updated with improved TypeScript configuration and testing capabilities.
+GeoPrivacy is an innovative web application developed for NoirHack, designed to generate zero-knowledge proofs for location verification, ensuring maximum privacy and security.
 
 ## ✨ Features
 
@@ -19,28 +19,84 @@ GeoPrivacy is an innovative web application that generates zero-knowledge proofs
 - **Zero-Knowledge Proofs**: Noir Language
 - **Testing**: Jest and React Testing Library
 
-## 🌐 Getting Started
+## 🚀 Getting Started
 
+This section guides you through setting up and running the GeoPrivacy project locally.
+
+### 1. Prerequisites
+
+Before you begin, ensure you have the following installed:
+
+*   **Node.js**: Version 18 or newer. (npm is included with Node.js)
+    *   *You can download it from [nodejs.org](https://nodejs.org/)*
+*   **Noir Language (Nargo CLI)**:
+    *   Install `noirup` (the Noir version manager) by following the instructions on the official Noir website: [Noir Installation Guide](https://noir-lang.org/docs/getting_started/installation).
+    *   Then, install a Nargo version compatible with the project. This project uses `@noir-lang/noir_js@^1.0.0-beta.2`. The version `1.0.0-beta.3` of Nargo was previously mentioned in this README. Install it (or a compatible version) with:
+        ```bash
+        noirup -v 1.0.0-beta.3
+        ```
+
+### 2. Clone the Repository
+
+Clone the GeoPrivacy project to your local machine:
 ```bash
-# Install dependencies
-npm install --legacy-peer-deps
+git clone https://github.com/JulesWi/GeoPrivacy_Project.git
+cd GeoPrivacy_Project
+```
 
-# Start frontend
-npm run start:frontend
+### 3. Install Project Dependencies
 
-# Start backend
-npm run start:backend
+The main application and Noir circuits are located within the `frontend` directory. Navigate into it and install the necessary npm packages:
+```bash
+cd frontend
+npm install
+```
+*(If you encounter issues with peer dependencies, you might try `npm install --legacy-peer-deps`)*
 
-# Run tests
+### 4. Compile Noir Circuits
+
+The Noir zero-knowledge circuits need to be compiled before running the application.
+```bash
+# Make sure you are in the GeoPrivacy_Project/frontend/circuits directory
+cd circuits 
+nargo compile
+# Return to the frontend directory
+cd .. 
+```
+
+### 5. Run the Development Application
+
+To start the Next.js development server for the frontend:
+```bash
+# Make sure you are in the GeoPrivacy_Project/frontend directory
+npm run dev
+```
+The application should now be accessible at [http://localhost:3000](http://localhost:3000).
+
+### 6. Running Tests
+
+#### Circuit Tests
+Test your Noir circuits using Nargo:
+```bash
+# Make sure you are in the GeoPrivacy_Project/frontend/circuits directory
+cd circuits # If not already there
+nargo test 
+# You can also use `nargo execute` to run with Prover.toml inputs or `nargo info` for circuit details.
+cd ..
+```
+
+#### Frontend Tests
+Run the Jest tests for the React frontend:
+```bash
+# Make sure you are in the GeoPrivacy_Project/frontend directory
 npm test
 ```
 
-### Prerequisites
-
-- Node.js (v18+)
-- npm or yarn
-- React 18.x (for compatibility with react-leaflet)
-- TypeScript 5.x
+### (Optional) Keeping Dependencies Up-to-Date
+The project root includes helper scripts for managing dependencies:
+*   For Unix/Linux/macOS: `./update_deps.sh`
+*   For Windows: `.\update_deps.ps1`
+_These scripts attempt to update npm packages, run `npm audit fix`, and update Noir circuit dependencies._
 
 ### Security and Testing
 
@@ -57,52 +113,13 @@ npm test
 - Regular dependency updates
 - Implemented access control mechanisms
 
-1. Set up environment variables:
-```bash
-cp .env.example .env
-# Edit .env and add:
-# OP_SEPOLIA_RPC_URL=https://sepolia.optimism.io
-# PRIVATE_KEY=your_private_key
-# OPTIMISM_ETHERSCAN_API_KEY=your_api_key
-```
 
-2. Deploy the contract:
-```bash
-npx hardhat run scripts/deploy.ts --network op-sepolia
-```
 
-3. Verify the contract (optional):
-```bash
-npx hardhat verify --network op-sepolia DEPLOYED_CONTRACT_ADDRESS
-```
 
-#### Deployment Details
-- **Network**: OP Sepolia
-- **Token Cost**: 0.5 USDC
-- **Smart Contract**: `GeoPrivacyPayment.sol`
-- npm
-
-### Installation
-
-1. Clone the repository
-   ```bash
-   git clone https://github.com/yourusername/geoprivacy.git
-   ```
-
-2. Install dependencies
-   ```bash
-   cd geoprivacy/frontend
-   npm install
-   ```
-
-3. Run development server
-   ```bash
-   npm run dev
-   ```
 
 ## 🚀 Deployment
 
-Deployed on Netlify. Visit [GeoPrivacy App](https://geoprivacy.netlify.app)
+Deployed on Vercel. Visit [GeoPrivacy App](https://geo-privacy-project.vercel.app/)
 
 ## 🔒 Privacy Commitment
 
@@ -122,7 +139,11 @@ AztecNoir Team - Privacy Innovators project using Zero-Knowledge Proofs with Noi
 
 ## 🌍 Project Overview
 
-GeoPrivacy is a cutting-edge application that allows users to generate zero-knowledge proofs of their location without revealing exact coordinates. Using the Noir ZK framework, users can prove they are within a certain radius of a specified location (Paris) without disclosing their exact position.
+GeoPrivacy is a cutting-edge application, developed for NoirHack, that allows users to generate zero-knowledge proofs of their location without revealing exact coordinates. The core privacy is achieved using **Noir**, a domain-specific language for creating and verifying zero-knowledge proofs. Specifically, Noir circuits in this project are designed to:
+1.  Accept a user's private geographical coordinates and a public defined area (e.g., within a specific radius of Paris) as inputs.
+2.  Perform geometric calculations (like Haversine distance or point-in-polygon) securely within the circuit.
+3.  Produce a cryptographic proof affirming that the user's location meets the specified criteria (e.g., being inside the designated area) *without disclosing the precise coordinates themselves*.
+This enables verifiable location-based attestations while rigorously preserving user privacy.
 
 ## 🛠️ Technical Architecture
 
@@ -150,49 +171,7 @@ GeoPrivacy is a cutting-edge application that allows users to generate zero-know
 - **Timestamp Verification**: Ensure the proof is recent (within 24 hours)
 - **Privacy-Preserving**: Zero-knowledge proofs reveal nothing about exact coordinates
 
-## ⚙️ Setup and Installation
 
-### Dependency Management
-
-To keep dependencies up to date, use the following scripts:
-
-#### Unix/Linux/macOS
-```bash
-./update_deps.sh
-```
-
-#### Windows
-```powershell
-.\update_deps.ps1
-```
-
-These scripts will:
-- Update npm packages
-- Run npm audit fix
-- Update Noir circuit dependencies
-
-1. **Install Dependencies**:
-```bash
-npm install
-```
-
-2. **Install Noir/Nargo** (if not already installed):
-```bash
-curl -L https://raw.githubusercontent.com/noir-lang/noirup/main/install | bash
-noisup -v 1.0.0-beta.3
-```
-
-3. **Compile Circuit**:
-```bash
-cd frontend/circuits
-nargo compile
-```
-
-4. **Run Development Server**:
-```bash
-cd frontend
-npm run dev
-```
 
 ## 🧪 Testing
 

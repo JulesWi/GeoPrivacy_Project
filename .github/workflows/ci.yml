@@ -58,19 +58,28 @@ jobs:
     # Noir Circuit Tests
     - name: Install Noir
       run: |
-        set -e # Quitte immédiatement si une commande échoue.
+        set -e # Quitte immédiatement si une commande de CE script échoue.
         echo "Téléchargement du script d\'installation de noirup..."
         curl -L -o noirup_install.sh https://raw.githubusercontent.com/noir-lang/noirup/main/install
         
         echo "Rendre le script d\'installation de noirup exécutable..."
         chmod +x noirup_install.sh
         
-        echo "Exécution du script d\'installation de noirup avec bash et capture de la sortie..."
-        # Exécute le script et redirige stdout/stderr vers un fichier log.
-        # Utilise '|| true' pour que 'set -e' n\'arrête pas notre script avant que nous puissions afficher le log.
+        echo "Modification de noirup_install.sh pour ajouter 'set -x' pour un traçage détaillé..."
+        # Ajoute 'set -x' après la première ligne (#!/bin/sh ou #!/bin/bash) ou après 'set -e' si présent
+        # Cela va insérer 'set -x' à la deuxième ligne si la première est un shebang.
+        # Ou après 'set -e' si c\'est la première commande significative.
+        sed -i '1a set -x' noirup_install.sh 
+        # Alternative plus robuste si 'set -e' est toujours là:
+        # sed -i '/^set -e/a set -x' noirup_install.sh
+
+        echo "Contenu modifié de noirup_install.sh (premières lignes) :"
+        head -n 5 noirup_install.sh
+
+        echo "Exécution du script d\'installation de noirup modifié avec bash et capture de la sortie..."
         bash ./noirup_install.sh > noirup_install_output.log 2>&1 || true
         
-        echo "Sortie complète du script d\'installation de noirup (noirup_install_output.log) :"
+        echo "Sortie complète (avec traçage set -x) du script d\'installation (noirup_install_output.log) :"
         cat noirup_install_output.log
         
         echo "Vérification de l\'installation de noirup..."
@@ -82,10 +91,6 @@ jobs:
           ls -la "$HOME/.noirup/bin/" || echo "$HOME/.noirup/bin/ n\'existe pas ou est vide."
           echo "Contenu de $HOME/.noirup/ (si existant) :"
           ls -la "$HOME/.noirup/" || echo "$HOME/.noirup/ n\'existe pas ou est vide."
-          echo "Vérification de l\'espace disque disponible (df -h):"
-          df -h
-          echo "Vérification des permissions sur $HOME:"
-          ls -ld "$HOME"
           exit 1 # Assure que l\'étape échoue si noirup n\'est pas trouvé.
         fi
         

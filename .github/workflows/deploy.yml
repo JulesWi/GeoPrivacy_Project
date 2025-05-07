@@ -44,9 +44,11 @@ jobs:
     if: success()
     needs: deploy
     runs-on: ubuntu-latest
+    env:
+      SLACK_WEBHOOK_IS_SET: ${{ secrets.SLACK_WEBHOOK != '' }}
     steps:
       - name: Send Slack Notification
-        if: secrets.SLACK_WEBHOOK != ''
+        if: env.SLACK_WEBHOOK_IS_SET == 'true'
         uses: 8398a7/action-slack@v3
         with:
           status: success
@@ -59,9 +61,11 @@ jobs:
     if: failure()
     needs: deploy
     runs-on: ubuntu-latest
+    env:
+      SLACK_WEBHOOK_IS_SET: ${{ secrets.SLACK_WEBHOOK != '' }}
     steps:
       - name: Send Slack Notification
-        if: secrets.SLACK_WEBHOOK != ''
+        if: env.SLACK_WEBHOOK_IS_SET == 'true'
         uses: 8398a7/action-slack@v3
         with:
           status: failure

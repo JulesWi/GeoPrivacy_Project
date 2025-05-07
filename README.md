@@ -16,7 +16,7 @@ GeoPrivacy is an innovative web application that generates zero-knowledge proofs
 - **Frontend**: React 18 with TypeScript
 - **Styling**: Tailwind CSS with primary (light green) and secondary (light blue) colors
 - **Mapping**: React Leaflet
-- **Zero-Knowledge Proofs**: Noir Circuit and Aztec Network
+- **Zero-Knowledge Proofs**: Noir Language
 - **Testing**: Jest and React Testing Library
 
 ## 🌐 Getting Started
@@ -35,26 +35,6 @@ npm run start:backend
 npm test
 ```
 
-## 💰 Payment Model
-
-GeoPrivacy introduces an innovative payment mechanism for Zero-Knowledge Proofs:
-
-- **Network**: OP Sepolia
-- **Proof Generation Cost**: 0.5 USDC
-- **Smart Contract**: `GeoPrivacyPayment.sol`
-
-### How It Works
-
-1. Purchase a proof token via our smart contract
-2. Token is valid for a single ZK proof generation
-3. Secure and traceable blockchain-based payment
-
-### Requirements
-
-- Web3 Wallet compatible with OP Sepolia
-- USDC on OP Sepolia
-- Web3 Connection
-
 ### Prerequisites
 
 - Node.js (v18+)
@@ -64,12 +44,6 @@ GeoPrivacy introduces an innovative payment mechanism for Zero-Knowledge Proofs:
 
 ### Security and Testing
 
-#### Smart Contract Security
-- Comprehensive unit testing
-- Static code analysis
-- Gas optimization
-- Regular security audits
-
 #### Continuous Integration
 - Automated tests on every push and pull request
 - Code coverage reporting
@@ -77,27 +51,11 @@ GeoPrivacy introduces an innovative payment mechanism for Zero-Knowledge Proofs:
 - Vercel deployment with GitHub Actions
   - Configured with VERCEL_TOKEN, VERCEL_ORG_ID, and VERCEL_PROJECT_ID secrets
 
-#### Test Commands
-```bash
-# Run all contract tests
-npm run test:contracts
-
-# Generate test coverage report
-npm run test:contracts:coverage
-
-# Analyze gas usage
-npm run test:contracts:gas
-```
-
 #### Security Best Practices
 - All sensitive data managed via environment variables
 - Private keys and API keys never committed to repository
 - Regular dependency updates
 - Implemented access control mechanisms
-
-### Smart Contract Deployment
-
-#### OP Sepolia Deployment
 
 1. Set up environment variables:
 ```bash

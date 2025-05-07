@@ -95,8 +95,8 @@ jobs:
         # La commande 'install' n'est plus valide pour noirup.
         # Nargo pourrait être installé par défaut, ou 'noirup default stable' pourrait s'en charger.
         
-        echo "Définition de la version par défaut de nargo avec noirup..."
-        "$NOIRUP_EXECUTABLE_PATH" default stable
+        echo "Installation de Nargo en exécutant noirup sans arguments..."
+        "$NOIRUP_EXECUTABLE_PATH"
         
         echo "Ajout de nargo au GITHUB_PATH..."
         # Ce chemin est correct pour nargo lui-même après l'installation par noirup

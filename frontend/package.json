@@ -10,6 +10,7 @@
     "build": "next build",
     "start": "next start",
     "test": "jest",
+    "project:validate": "echo \"Dummy script project:validate executed\"",
     "noir:compile": "cd circuits && nargo compile",
     "noir:execute": "cd circuits && nargo execute",
     "noir:info": "cd circuits && nargo info"

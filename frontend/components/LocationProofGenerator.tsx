@@ -3,6 +3,7 @@ import { sha3_256 } from 'js-sha3';
 import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
 import { type Icon as LeafletIconType, LatLngExpression } from 'leaflet';
+import LocationSettings, { LocationSettings as LocationSettingsType } from './LocationSettings';
 
 // Disable SSR for Leaflet components due to window object dependency
 const DynamicMapContainer = dynamic(() => import('react-leaflet').then((mod) => mod.MapContainer), { ssr: false });
@@ -16,6 +17,8 @@ interface SecureLocationProof {
   timestamp: Date;       // Timestamp of the proof
   zkProof: string;       // Zero-Knowledge proof
   region?: string;       // Approximate region (city/department)
+  radius?: number;       // Rayon de localisation en mètres
+  zoneName?: string;     // Nom personnalisé de la zone
 }
 
 const LocationProofGenerator: React.FC = () => {
@@ -27,6 +30,12 @@ const LocationProofGenerator: React.FC = () => {
   const [showSuccess, setShowSuccess] = useState(false);
   const [copied, setCopied] = useState(false);
   const [customMarkerIcon, setCustomMarkerIcon] = useState<LeafletIconType | null>(null);
+  const [locationSettings, setLocationSettings] = useState<LocationSettingsType>({
+    radius: 500,
+    zoneName: 'My Zone',
+    precision: 5,
+    privacyLevel: 'high'
+  });
 
   // Set isClient to true when component mounts and create custom icon
   useEffect(() => {
@@ -80,7 +89,9 @@ const LocationProofGenerator: React.FC = () => {
         region: proof.region,
         timestamp: proof.timestamp,
         zkProof: proof.zkProof,
-        locationHash: proof.locationHash
+        locationHash: proof.locationHash,
+        radius: proof.radius,
+        zoneName: proof.zoneName
       });
       
       navigator.clipboard.writeText(shareableProof)
@@ -126,7 +137,9 @@ const LocationProofGenerator: React.FC = () => {
             locationHash,
             timestamp: new Date(),
             zkProof,
-            region
+            region,
+            radius: locationSettings.radius,
+            zoneName: locationSettings.zoneName
           };
 
           // 5. Update of state with the secure proof
@@ -147,26 +160,32 @@ const LocationProofGenerator: React.FC = () => {
         setError("Location access denied. Please enable location services.");
         setLoading(false);
       },
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+      { enableHighAccuracy: locationSettings.precision > 5, timeout: 10000, maximumAge: 0 }
     );
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-light/30 to-secondary-light/30 py-8">
-      <div className="container mx-auto p-6 bg-white rounded-xl shadow-xl">
+    <div className="min-h-screen bg-gradient-to-br from-primary-light/30 to-secondary-light/30 dark:from-primary-dark/20 dark:to-secondary-dark/20 py-8 transition-all duration-300">
+      <div className="container mx-auto p-6 bg-white dark:bg-dark-card rounded-xl shadow-xl transition-all duration-300 animate-fade-in">
         {/* Header */}
-        <div className="mb-6 text-center">
-          <h1 className="text-4xl font-extrabold text-primary-dark mb-2">GeoPrivacy</h1>
-          <p className="text-secondary-dark text-lg">Generate location proofs with privacy</p>
-          <div className="h-1 w-32 bg-gradient-to-r from-primary to-secondary mx-auto my-4 rounded-full"></div>
+        <div className="mb-6 text-center animate-slide-up">
+          <h1 className="text-4xl font-extrabold text-primary-dark dark:text-primary-light mb-2 transition-colors duration-300">GeoPrivacy</h1>
+          <p className="text-secondary-dark dark:text-secondary-light text-lg transition-colors duration-300">Generate location proofs with privacy</p>
+          <div className="h-1 w-32 bg-gradient-to-r from-primary to-secondary mx-auto my-4 rounded-full animate-pulse-slow"></div>
         </div>
+        
+        {/* Location Settings Component */}
+        <LocationSettings 
+          onSettingsChange={setLocationSettings}
+          initialSettings={locationSettings}
+        />
 
         <div className="grid md:grid-cols-2 gap-8">
           {/* Control Panel */}
-          <div className="space-y-6 bg-gray-50 p-6 rounded-lg shadow-md border border-primary-light/30">
-            <div>
-              <h2 className="text-3xl font-bold text-primary-dark mb-2">Generate Proof</h2>
-              <p className="text-gray-600">Create a zero-knowledge proof of your current location</p>
+          <div className="space-y-6 bg-gray-50 dark:bg-dark-card p-6 rounded-lg shadow-md border border-primary-light/30 dark:border-primary-dark/30 transition-all duration-300">
+            <div className="animate-slide-up">
+              <h2 className="text-3xl font-bold text-primary-dark dark:text-primary-light mb-2 transition-colors duration-300">Generate Proof</h2>
+              <p className="text-gray-600 dark:text-gray-300 transition-colors duration-300">Create a zero-knowledge proof of your current location</p>
             </div>
             
             {/* Success Message */}
@@ -205,7 +224,7 @@ const LocationProofGenerator: React.FC = () => {
             <button 
               onClick={generateProof}
               disabled={loading}
-              className={`w-full bg-primary hover:bg-primary-dark text-white font-bold py-4 px-6 rounded-lg transition duration-300 ease-in-out transform hover:scale-105 shadow-md ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
+              className="w-full py-3 px-6 bg-primary hover:bg-primary-dark dark:bg-primary-dark dark:hover:bg-primary text-white font-bold rounded-lg shadow-md hover:shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary-light focus:ring-opacity-50 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105 active:scale-95"
             >
               <span className="flex items-center justify-center">
                 {loading ? (
@@ -283,7 +302,7 @@ const LocationProofGenerator: React.FC = () => {
           </div>
           
           {/* Map Container */}
-          <div className="h-[500px] w-full rounded-lg overflow-hidden shadow-lg border-4 border-secondary-light">
+          <div className="h-[500px] w-full rounded-lg overflow-hidden shadow-lg border-4 border-secondary-light dark:border-secondary-dark transition-all duration-300 animate-fade-in">
             {isClient ? (
               proof ? (
                 <DynamicMapContainer center={mapCenter} zoom={13} style={{ height: '100%', width: '100%' }}>
@@ -297,8 +316,9 @@ const LocationProofGenerator: React.FC = () => {
                         <div className="text-center p-1">
                           <p className="font-semibold text-primary-dark mb-2">Location Verified</p>
                           <pre className="bg-gray-100 p-2 rounded text-xs text-left font-mono overflow-auto max-w-[200px] whitespace-pre-wrap">
-{`Region: ${proof.region || 'Unknown'}
-Radius: ~500m
+{`Zone: ${proof.zoneName || 'My Zone'}
+Region: ${proof.region || 'Unknown'}
+Radius: ~${proof.radius || 500}m
 Generated: ${proof.timestamp ? proof.timestamp.toLocaleTimeString() : 'Unknown'}`}
                           </pre>
                         </div>

@@ -1,5 +1,7 @@
 # Coordonnées proches de Paris (multipliées par 10000 pour éviter les décimaux)
 latitude = "488574"
 longitude = "23568"
-# Timestamp actuel (4 mai 2025)
-timestamp = "1714837123"
+# Timestamp actuel (15 mai 2025)
+timestamp = "1716400056"
+# Rayon personnalisé en km (0.5 = 500m)
+custom_radius = "0.5"

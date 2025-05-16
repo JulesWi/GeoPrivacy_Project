@@ -1,19 +1,19 @@
-import Head from 'next/head'
-import Link from 'next/link'
-import LocationProofGenerator from '../components/LocationProofGenerator'
-import ThemeToggle from '../components/ThemeToggle'
-import { useTheme } from '../contexts/ThemeContext'
+import React from 'react';
+import Head from 'next/head';
+import Link from 'next/link';
+import { useTheme } from '../contexts/ThemeContext';
+import ThemeToggle from '../components/ThemeToggle';
+import ZoneDashboard from '../components/ZoneDashboard';
 
-export default function Home() {
+const Dashboard: React.FC = () => {
   const { theme } = useTheme();
 
   return (
-    <div className={theme}>
+    <div className={`min-h-screen bg-gradient-to-br from-primary-light/30 to-secondary-light/30 dark:from-primary-dark/20 dark:to-secondary-dark/20 transition-colors duration-300 ${theme}`}>
       <Head>
-        <title>GeoPrivacy - Zero-Knowledge Location Proofs</title>
-        <meta name="description" content="Generate secure, private location proofs" />
+        <title>Zone Dashboard | GeoPrivacy</title>
+        <meta name="description" content="View and manage your location zones" />
         <link rel="icon" href="/favicon.ico" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
 
       <header className="bg-white dark:bg-dark-card shadow-md transition-colors duration-300">
@@ -26,10 +26,10 @@ export default function Home() {
                 </h1>
               </div>
               <nav className="ml-6 flex space-x-8">
-                <Link href="/" className="inline-flex items-center px-1 pt-1 border-b-2 border-primary-dark dark:border-primary-light text-sm font-medium text-primary-dark dark:text-primary-light transition-colors duration-300">
+                <Link href="/" className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-primary-dark dark:hover:text-primary-light transition-colors duration-300">
                   Home
                 </Link>
-                <Link href="/dashboard" className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-primary-dark dark:hover:text-primary-light transition-colors duration-300">
+                <Link href="/dashboard" className="inline-flex items-center px-1 pt-1 border-b-2 border-primary-dark dark:border-primary-light text-sm font-medium text-primary-dark dark:text-primary-light transition-colors duration-300">
                   Dashboard
                 </Link>
               </nav>
@@ -41,7 +41,9 @@ export default function Home() {
         </div>
       </header>
 
-      <LocationProofGenerator />
+      <main>
+        <ZoneDashboard />
+      </main>
 
       <footer className="bg-white dark:bg-dark-card shadow-inner mt-8 transition-colors duration-300">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -51,5 +53,7 @@ export default function Home() {
         </div>
       </footer>
     </div>
-  )
-}
+  );
+};
+
+export default Dashboard;

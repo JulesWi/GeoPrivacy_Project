@@ -38,7 +38,7 @@ jobs:
         vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
         vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
         github-comment: false # To prevent resource access issues
-        working-directory: ./frontend
+        path: ./frontend
 
   notify_success:
     if: success()

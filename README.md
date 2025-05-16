@@ -133,9 +133,6 @@ MIT License
 
 Contributions are welcome! Please read our contributing guidelines.
 
-## 👥 Team
-
-AztecNoir Team - Privacy Innovators project using Zero-Knowledge Proofs with Noir and Aztec Network
 
 ## 🌍 Project Overview
 

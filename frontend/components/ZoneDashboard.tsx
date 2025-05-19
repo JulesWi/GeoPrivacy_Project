@@ -17,24 +17,20 @@ const ZoneDashboard: React.FC = () => {
   const [zones, setZones] = useState<Zone[]>([]);
   const { showNotification } = useNotification();
 
-  // Mock data for demonstration
-  useEffect(() => {
-    // Simulate loading delay
+    useEffect(() => {
+    // Show loading notification
     showNotification('info', 'Loading your zones...', 1500);
     
-    // Simulate API call
-    setTimeout(() => {
-      const mockZones: Zone[] = [
-        { id: '1', name: 'Home', type: 'residential', radius: 500, visits: 120, lastVisit: '2023-06-15T10:30:00Z' },
-        { id: '2', name: 'Office', type: 'commercial', radius: 300, visits: 85, lastVisit: '2023-06-14T17:45:00Z' },
-        { id: '3', name: 'University', type: 'educational', radius: 800, visits: 42, lastVisit: '2023-06-10T14:20:00Z' },
-        { id: '4', name: 'Park', type: 'recreational', radius: 1200, visits: 28, lastVisit: '2023-06-12T09:15:00Z' },
-        { id: '5', name: 'Downtown', type: 'custom', radius: 1500, visits: 15, lastVisit: '2023-06-08T18:30:00Z' },
-      ];
-      
-      setZones(mockZones);
-      showNotification('success', `${mockZones.length} zones loaded successfully`, 3000);
-    }, 1500);
+    // Fetch real data from API
+    fetch('/api/zones') // Assurez-vous que cette API existe
+      .then(response => response.json())
+      .then(data => {
+        setZones(data);
+        showNotification('success', `${data.length} zones loaded successfully`, 3000);
+      })
+      .catch(error => {
+        showNotification('error', 'Failed to load zones', 3000);
+      });
   }, [showNotification]);
 
   // Filter zones based on selected types

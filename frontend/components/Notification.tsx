@@ -54,7 +54,7 @@ const Notification: React.FC<NotificationProps> = ({
   };
 
   return (
-    <div className={`fixed top-4 right-4 z-50 max-w-md animate-fade-in transition-all duration-300 transform ${isVisible ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'}`}>
+    <div className={`fixed bottom-4 right-4 z-40 max-w-md animate-fade-in transition-all duration-300 transform ${isVisible ? 'translate-x-0 opacity-100' : 'translate-x-4 opacity-0'}`}>
       <div className={`rounded-lg border p-4 shadow-md ${typeClasses[type]} transition-colors duration-300`}>
         <div className="flex items-start">
           <div className="flex-shrink-0">
